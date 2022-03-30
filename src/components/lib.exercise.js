@@ -2,6 +2,8 @@ import styled from '@emotion/styled/macro'
 import {Dialog as ReachDialog} from '@reach/dialog'
 import * as color from 'styles/colors'
 import * as mq from 'styles/media-queries'
+import {FaSpinner} from 'react-icons/fa'
+
 
 // 🐨 create a button styled component here called "Button"
 // make it look nice and allow it to support a "variant" prop which can be
@@ -89,4 +91,7 @@ const Button = styled.button({
   borderRadius: '3px',
 
 })
-export {CircleButton, Dialog, FormGroup, Input, Button}
+
+const Spinner = styled(FaSpinner)({color: color.orange})
+
+export {CircleButton, Dialog, FormGroup, Input, Button, Spinner}
