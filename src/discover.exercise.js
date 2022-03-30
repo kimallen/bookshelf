@@ -1,51 +1,46 @@
 /** @jsx jsx */
 import {jsx} from '@emotion/core'
-import { useState, useEffect } from 'react' 
-import './bootstrap'
+
+import * as React from 'react'
 import Tooltip from '@reach/tooltip'
-import {FaSearch} from 'react-icons/fa'
+import {FaSearch, FaTimes} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
 import {client} from './utils/api-client'
+import * as colors from './styles/colors'
 
 function DiscoverBooksScreen() {
-  // 🐨 add state for status ('idle', 'loading', or 'success'), data, and query
-  // 🐨 you'll also notice that we don't want to run the search until the
-  // user has submitted the form, so you'll need a boolean for that as well
-  // 💰 I called it "queried"
-  const [status, setStatus] = useState('idle');
-  const [data, setData] = useState();
-  const [query, setQuery] = useState();
-  const [queried, setQueried] = useState(false)
-  // 🐨 Add a useEffect callback here for making the request with the
-  // client and updating the status and data.
-  useEffect(() => {
+  const [status, setStatus] = React.useState('idle')
+  const [data, setData] = React.useState(null)
+  const [error, setError] = React.useState('')
+  const [query, setQuery] = React.useState('')
+  const [queried, setQueried] = React.useState(false)
+
+  const isLoading = status === 'loading'
+  const isSuccess = status === 'success'
+  const isError = status === 'fail'
+  React.useEffect(() => {
     if (!queried) {
       return
     }
     setStatus('loading')
-    client(`books?query=${encodeURIComponent(query)}`).then(data => {
-      setData(data)
-      setStatus('success')
-    })
-  },[queried, query])
-  // 💰 Here's the endpoint you'll call: `books?query=${encodeURIComponent(query)}`
-  // 🐨 remember, effect callbacks are called on the initial render too
-  // so you'll want to check if the user has submitted the form yet and if
-  // they haven't then return early (💰 this is what the queried state is for).
-
-  // 🐨 replace these with derived state values based on the status.
-  const isLoading = status === 'loading'
-  const isSuccess = status === 'success'
+    client(`books?query=${encodeURIComponent(query)}`).then(
+      responseData => {
+        setData(responseData)
+        setStatus('success')
+      },
+      errorResponse => {
+        setError(errorResponse)
+        console.log('in error')
+        setStatus('fail')
+      }
+    )
+  }, [query, queried])
 
   function handleSearchSubmit(event) {
-    // 🐨 call preventDefault on the event so you don't get a full page reload
     event.preventDefault()
-    // 🐨 set the queried state to true
     setQueried(true)
-    // 🐨 set the query value which you can get from event.target.elements
-    const queryValue = event.target.elements.search.value
-    setQuery(queryValue)
+    setQuery(event.target.elements.search.value)
   }
 
   return (
@@ -69,12 +64,21 @@ function DiscoverBooksScreen() {
                 background: 'transparent',
               }}
             >
-              {isLoading ? <Spinner /> : <FaSearch aria-label="search" />}
+              {isLoading ? <Spinner /> : isError ? 
+            <FaTimes aria-label="error" css={{color: colors.danger}} />
+              : <FaSearch aria-label="search" />}
             </button>
           </label>
         </Tooltip>
       </form>
-
+      {
+        isError ? (
+          <div css={{color: colors.danger}}>
+            <p>There was an error:</p>
+            <pre>{error.message}</pre>
+          </div>
+        ) : null
+      }
       {isSuccess ? (
         data?.books?.length ? (
           <BookListUL css={{marginTop: 20}}>
