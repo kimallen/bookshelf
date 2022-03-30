@@ -6,7 +6,7 @@ import Tooltip from '@reach/tooltip'
 import {FaSearch} from 'react-icons/fa'
 import {Input, BookListUL, Spinner} from './components/lib'
 import {BookRow} from './components/book-row'
-// import {client} from './utils/api-client'
+import {client} from './utils/api-client'
 
 function DiscoverBooksScreen() {
   // 🐨 add state for status ('idle', 'loading', or 'success'), data, and query
@@ -24,21 +24,10 @@ function DiscoverBooksScreen() {
       return
     }
     setStatus('loading')
-      window
-      .fetch(`${process.env.REACT_APP_API_URL}/books?query=${encodeURIComponent(query)}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        setData(data)
-        setStatus('success')
-      })
-      
+    client(`books?query=${encodeURIComponent(query)}`).then(data => {
+      setData(data)
+      setStatus('success')
+    })
   },[queried, query])
   // 💰 Here's the endpoint you'll call: `books?query=${encodeURIComponent(query)}`
   // 🐨 remember, effect callbacks are called on the initial render too
