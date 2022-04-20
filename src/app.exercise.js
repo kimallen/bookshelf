@@ -16,7 +16,7 @@ async function getUser() {
   if (token) {
     const data = await client('me', {token})
     user = data.user
-  }
+  } 
 
   return user
 }
