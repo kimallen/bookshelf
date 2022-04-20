@@ -3,11 +3,12 @@ import {jsx} from '@emotion/core'
 
 import * as React from 'react'
 import * as auth from 'auth-provider'
-import { FullPageSpinner } from 'components/lib'
+import {FullPageSpinner} from './components/lib'
+import * as colors from './styles/colors'
 import {client} from './utils/api-client'
+import {useAsync} from './utils/hooks'
 import {AuthenticatedApp} from './authenticated-app'
 import {UnauthenticatedApp} from './unauthenticated-app'
-import {useAsync} from './utils/hooks'
 
 async function getUser() {
   let user = null
@@ -16,7 +17,7 @@ async function getUser() {
   if (token) {
     const data = await client('me', {token})
     user = data.user
-  } 
+  }
 
   return user
 }
@@ -25,10 +26,10 @@ function App() {
   const {
     data: user,
     error,
-    isIdle,
     isLoading,
-    isSuccess,
+    isIdle,
     isError,
+    isSuccess,
     run,
     setData,
   } = useAsync()
@@ -37,8 +38,8 @@ function App() {
     run(getUser())
   }, [run])
 
-  const login = form => auth.login(form).then(u => setData(u))
-  const register = form => auth.register(form).then(u => setData(u))
+  const login = form => auth.login(form).then(user => setData(user))
+  const register = form => auth.register(form).then(user => setData(user))
   const logout = () => {
     auth.logout()
     setData(null)
@@ -49,7 +50,21 @@ function App() {
   }
 
   if (isError) {
-    return <div>Uh oh, there is a problem: {error.message}</div>
+    return (
+      <div
+        css={{
+          color: colors.danger,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <p>Uh oh... There's a problem. Try refreshing the app.</p>
+        <pre>{error.message}</pre>
+      </div>
+    )
   }
 
   if (isSuccess) {
