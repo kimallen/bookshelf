@@ -9,9 +9,9 @@ import {Button} from './components/lib'
 import * as mq from './styles/media-queries'
 import * as colors from './styles/colors'
 // 🐨 you'll need to import all the screen components in the screens directory
-import { BookScreen } from 'screens/book.exercise'
+import { BookScreen } from 'screens/book'
 import { DiscoverBooksScreen } from 'screens/discover'
-import { NotFoundScreen } from 'screens/not-found.exercise'
+import { NotFoundScreen } from 'screens/not-found'
 
 
 function AuthenticatedApp({user, logout}) {
