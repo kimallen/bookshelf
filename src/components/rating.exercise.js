@@ -3,7 +3,9 @@ import {jsx} from '@emotion/core'
 
 import * as React from 'react'
 // 🐨 you'll need useMutation and queryCache from react-query
+import { useMutation, queryCache } from 'react-query'
 // 🐨 you'll also need the client from utils/api-client
+import { client } from 'utils/api-client'
 import {FaStar} from 'react-icons/fa'
 import * as colors from 'styles/colors'
 
@@ -26,8 +28,6 @@ function Rating({listItem, user}) {
   //   you can pass as data.
   // 💰 if you want to get the list-items cache updated after this query finishes
   // the use the `onSettled` config option to queryCache.invalidateQueries('list-items')
-  const update = () => {}
-
   React.useEffect(() => {
     function handleKeyDown(event) {
       if (event.key === 'Tab') {
@@ -38,6 +38,10 @@ function Rating({listItem, user}) {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  const [update] = useMutation(
+    (updates) => client(`list-items/${updates.id}`, {method: 'PUT', token: user.token, data: updates}),
+    {onSettled: () => queryCache.invalidateQueries('list-items')}
+  )
   const rootClassName = `list-item-${listItem.id}`
 
   const stars = Array.from({length: 5}).map((x, i) => {
