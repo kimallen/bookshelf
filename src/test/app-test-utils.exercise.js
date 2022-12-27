@@ -1,16 +1,13 @@
-import * as React from 'react'
 import {
   render as rtlRender,
   screen,
   waitForElementToBeRemoved,
 } from '@testing-library/react'
-import * as auth from 'auth-provider'
-import {buildUser} from 'test/generate'
-import * as usersDB from 'test/data/users'
-
+import userEvent from '@testing-library/user-event'
 import {AppProviders} from 'context'
-
-
+import * as auth from 'auth-provider'
+import {buildUser} from './generate'
+import * as usersDB from './data/users'
 
 async function render(ui, {route = '/list', user, ...renderOptions} = {}) {
   // if you want to render the app unauthenticated then pass "null" as the user
@@ -26,7 +23,7 @@ async function render(ui, {route = '/list', user, ...renderOptions} = {}) {
 
   return returnValue
 }
-  
+
 async function loginAsUser(userProperties) {
   const user = buildUser(userProperties)
   await usersDB.create(user)
@@ -41,5 +38,5 @@ const waitForLoadingToFinish = () =>
     ...screen.queryAllByText(/loading/i),
   ])
 
-  export * from '@testing-library/react'
-export {render, waitForLoadingToFinish, loginAsUser}
+export * from '@testing-library/react'
+export {render, userEvent, loginAsUser, waitForLoadingToFinish}

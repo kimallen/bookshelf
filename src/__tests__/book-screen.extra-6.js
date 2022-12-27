@@ -21,7 +21,9 @@ async function renderBookScreen({user, book, listItem} = {}) {
     book = await booksDB.create(buildBook())
   }
   if (listItem === undefined) {
-    listItem = await listItemsDB.create(buildListItem({owner: user, book}))
+    listItem = await listItemsDB.create(
+      buildListItem({owner: user, book})
+      )
   }
   const route = `/book/${book.id}`
 
